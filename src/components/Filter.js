@@ -35,7 +35,7 @@ function Filter(props) {
             });
             setItems(temp)
         })
-    }, [props.filterName])
+    }, [props.filterName,props.savedFilters])
     return (
         <div>
             <h2>{props.filterName}</h2>
