@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios'
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
+import FormGroup from '@material-ui/core/FormGroup';
 
 function Filter(props) {
     const [items, setItems] = useState([])
@@ -16,10 +19,19 @@ function Filter(props) {
         props.parentCallback(props.filterName,temp)
     }
     useEffect(() => {
-        axios.get(`http://localhost:3000/${props.filterName.charAt(0).toLowerCase() + props.filterName.slice(1)}`).then(res => {
+        let filterVariable = props.filterName.charAt(0).toLowerCase() + props.filterName.slice(1);
+        axios.get(`http://localhost:3000/${filterVariable}`).then(res => {
             let temp = [];
             res.data.forEach(element => {
-                temp.push({ id: element.id, name: element.name, value: false })
+                if(props.savedFilters && props.savedFilters[filterVariable]?.length>0){
+                    if(props.savedFilters[filterVariable].includes(element.id)){
+                        temp.push({ id: element.id, name: element.name, value: true })
+                    } else {
+                        temp.push({ id: element.id, name: element.name, value: false })
+                    }
+                } else {
+                    temp.push({ id: element.id, name: element.name, value: false })
+                }
             });
             setItems(temp)
         })
@@ -29,7 +41,21 @@ function Filter(props) {
             <h2>{props.filterName}</h2>
             {
                 items.map(_ =>
-                    (<div key={_.id}><input type='checkbox' name={_.name} id={_.id} value={_.value} checked={_.value} onChange={event => handleValueChange(event)} />{_.name}</div>)
+                    (
+                        <FormGroup row key={_.id}>
+                            <FormControlLabel
+                                control={
+                                  <Checkbox
+                                    checked={_.value}
+                                    onChange={event => handleValueChange(event)}
+                                    name={_.name} id={_.id}
+                                    color="primary"
+                                  />
+                                }
+                                label={_.name}
+                              />
+                        </FormGroup>
+                      )
                 )
             }
         </div>

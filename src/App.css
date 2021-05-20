@@ -28,6 +28,9 @@
   color: #61dafb;
 }
 
+.cardClass {
+  margin: 20px 20%;
+}
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
